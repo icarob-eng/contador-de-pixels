@@ -1,2 +1,2 @@
-# contador-de-pixels
-Contador de pixels usado para medir área de determinadas amostras. Ver Jupyter Notebook [`Cortador_de_pizza.ipynb`](https://github.com/icarob-eng/contador-de-pixels/blob/main/Cortador_de_pizza.ipynb) para desenvolvimento do projeto.
+# Contador de pixels
+Contador de pixels usado para medir área de determinadas amostras. Ver Jupyter Notebook [`Cortador_de_pizza.ipynb`](https://github.com/icarob-eng/contador-de-pixels/blob/main/Cortador_de_pizza.ipynb) para desenvolvimento do projeto. Imagens usadas estão no diretório `amostras-mes1`.
