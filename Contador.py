@@ -1,6 +1,6 @@
 import cv2
-# import numpy as np
-# from matplotlib import pyplot as plt
+import numpy as np
+from matplotlib import pyplot as plt
 
 from itertools import product
 
@@ -16,6 +16,7 @@ BASES = [
 
 
 def contar(path: str) -> int:
+    """ Conta os píxeis de um determinado arquivo """
     imgarr = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
     _, binarie = cv2.threshold(src=imgarr, thresh=0, maxval=255, type=cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -28,12 +29,16 @@ def contar(path: str) -> int:
 
 
 def remover(base: str, mes: int):
+    """ Remove um trio de caminhos de arquivo de acordo com especificado """
     for n in range(1, 3 + 1):
         results.pop(ARQ.format(mes, base.format(n)))
 
 
-def medir(nome_base: str, ref_base: str):
-    pass
+def ap_mes(n: int):
+    mes = refs_area[n-1]
+    aps = [mes[k] / results[ARQ.format(n, k)] for k in mes]
+
+    return np.mean(aps), np.std(aps)
 
 
 if __name__ == "__main__":
@@ -43,30 +48,34 @@ if __name__ == "__main__":
     # cria um dicionário cujas chaves são preenchidas para cada mes num intervalo de 1 a n_meses, para todas
     # as bases de nome listadas anteriormente, para todos os valores de 1 a 3 (S1, S2, S3)
 
+    remover(BASES[5], 1)  # remove REF
+    remover(BASES[0], 2)  # remove {}
+    remover(BASES[0], 3)
+    remover(BASES[0], 4)
+    remover(BASES[0], 5)
+
+    for key in results:
+        results[key] = contar(key)
+
+    refs_REF = {
+        BASES[5].format(1): 3 ** 2,  # REF1
+        BASES[5].format(2): 3 ** 2,  # REF2
+        BASES[5].format(3): 3 ** 2  # REF3
+    }
     refs_area = [
         {
             BASES[0].format(1): 2.6 * 2.6,
             BASES[0].format(2): 2.6 * 2.595,
             BASES[0].format(3): 2.6 * 2.6
         },
-
-        {
-            BASES[-1].format(1): 3 ** 2,  # REF1
-            BASES[-1].format(2): 3 ** 2,  # '' 2
-            BASES[-1].format(3): 3 ** 2  # etc
-        },
-
-        {
-            BASES[-1].format(1): 3 ** 2,
-            BASES[-1].format(2): 3 ** 2,
-            BASES[-1].format(3): 3 ** 2
-        }
+        refs_REF,  # utilizou-se a mesma referência
+        refs_REF,
+        refs_REF,
+        refs_REF
     ]
 
-    remover(BASES[4], 1)
-    remover(BASES[0], 2)
-
-    for key in results:
-        results[key] = contar(key)
-
-    print(results)
+    areas = {}
+    for k in results:
+        if k.split('/')[1].split('.')[0][:-1] != BASES[5][:-2]:  # garante que ref não será considerado
+            m = int(k.split('/')[0][-1])  # descobre o número do mês
+            areas[k] = results[k] * ap_mes(m)[0]
